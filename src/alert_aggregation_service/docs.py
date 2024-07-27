@@ -1,0 +1,3 @@
+descrition = """
+Alerts aggregation service
+"""
