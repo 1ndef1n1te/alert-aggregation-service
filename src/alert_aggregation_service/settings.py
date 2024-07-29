@@ -4,6 +4,7 @@ from pydantic import HttpUrl
 
 class Settings(BaseSettings):
     MATTERMOST_WEBHOOK_URL: HttpUrl
+    ENVIRONMENTS: str
 
     class Config:
         env_file = ".env"

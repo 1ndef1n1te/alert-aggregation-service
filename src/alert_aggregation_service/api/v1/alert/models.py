@@ -1,10 +1,10 @@
 from pydantic import BaseModel
 from enum import Enum
+from ....settings import settings
 
+custom_environments_dict = {k: k for k in settings.ENVIRONMENTS.split(" ")}
 
-class Environment(str, Enum):
-    environment1 = "environment1"
-    environment2 = "environment2"
+Environment = Enum("Environment", custom_environments_dict)
 
 
 class Alert(BaseModel):

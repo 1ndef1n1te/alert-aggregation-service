@@ -11,7 +11,7 @@ alert_router = APIRouter(prefix="/api/v1/alert", tags=["alert"])
 
 @alert_router.post("/create", summary="Add alert")
 async def create_alert(alert: Alert):
-    async with aiofiles.open(f"alerts-{alert.env.value}.md", mode="a") as f:
+    async with aiofiles.open(f"./data/alerts-{alert.env.value}.md", mode="a") as f:
         await f.write(f"|{alert.name:^25}|{alert.message:^25}|\n")
         logger.info(
             f"Successfully add alert: {alert.name} with message: {alert.message} | environment: {alert.env.value}"
@@ -22,15 +22,13 @@ async def create_alert(alert: Alert):
 @alert_router.post("/send/{alert_env}", summary="Send alerts")
 async def send_alert(alert_env: Environment):
     try:
-        async with aiofiles.open(f"alerts-{alert_env.value}.md", "r") as file:
+        async with aiofiles.open(f"./data/alerts-{alert_env.value}.md", "r") as file:
             alerts = await file.readlines()
     except FileNotFoundError:
-        logger.error(
-            f"Alerts file for environment {alert_env.value} are not initialize, send some alerts before sending them"
-        )
+        logger.error(f"Can`t open alerts file | environment {alert_env.value}")
         raise HTTPException(
             status_code=500,
-            detail=f"Alerts file for environment {alert_env.value} are not initialize, send some alerts before sending them",
+            detail=f"Can`t open alerts file | environment {alert_env.value}",
         )
     alerts.insert(0, f"### {alert_env.value} stand alerts\n")
     alerts.insert(1, f"|{'Alert name':^25}|{'Alert content':^25}|\n")
@@ -44,20 +42,44 @@ async def send_alert(alert_env: Environment):
                 data=text,
             ):
                 logger.info(
-                    f"Successfully send: {len(alerts)-3} alerts from environment: {alert_env.value} to the reciever server"
+                    f"Successfully send: {len(alerts)-3} alerts to the reciever server | environment: {alert_env.value} "
                 )
-        async with aiofiles.open(f"alerts-{alert_env.value}.md", "w") as file:
+        async with aiofiles.open(f"./data/alerts-{alert_env.value}.md", "w") as file:
             logger.info(f"Successfully clear alerts | environment: {alert_env.value}")
         return {"status": "ok"}
     else:
-        logger.info(f"There are no alerts | environment {alert_env.value}, skipping...")
+        logger.info(f"There are no alerts  skipping... | environment {alert_env.value}")
         raise HTTPException(
             status_code=200,
-            detail=f"There are no alerts for {alert_env.value}, skipping...",
+            detail=f"There are no alerts skipping... | environment: {alert_env.value}",
         )
 
-@alert_router.delete("/clear/{alert_env}", summary="Clear alert for specific environment")
+
+@alert_router.get("/list/{alert_env}", summary="List alerts for specific environment")
+async def list_alerts(alert_env: Environment):
+    alerts_list = []
+    try:
+        async with aiofiles.open(
+            f"./data/alerts-{alert_env.value}.md", mode="r"
+        ) as file:
+            alerts = await file.readlines()
+            for alert in alerts:
+                alert = alert.replace(" ", "").strip("|").strip("\n").split("|")
+                alert = Alert(name=alert[0], message=alert[1], env=alert_env.value)
+                alerts_list.append(alert)
+        return alerts_list
+    except FileNotFoundError:
+        logger.error(f"Can`t open alerts file | environment {alert_env.value}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Can`t open alerts file | environment {alert_env.value}",
+        )
+
+
+@alert_router.delete(
+    "/clear/{alert_env}", summary="Clear alert for specific environment"
+)
 async def clear_alerts(alert_env: Environment):
-  async with aiofiles.open(f"alerts-{alert_env.value}.md", mode="w") as f:
-    logger.info(f"Successfully clear alerts | environment: {alert_env.value}")
-    return {"status": "ok"}
+    async with aiofiles.open(f"./data/alerts-{alert_env.value}.md", mode="w") as f:
+        logger.info(f"Successfully clear alerts | environment: {alert_env.value}")
+        return {"status": "ok"}
