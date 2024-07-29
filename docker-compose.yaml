@@ -1,0 +1,15 @@
+version: "3"
+
+services:
+  alerts-aggregation-tool:
+    container_name: alerts-aggregation-tool
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - MATTERMOST_WEBHOOK_URL=https://mattermost.REDACRED
+      - ENVIRONMENTS=env1 env2
+    volumes:
+      - ./data:/data
