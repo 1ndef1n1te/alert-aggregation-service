@@ -14,7 +14,7 @@ async def create_alert(alert: Alert):
     async with aiofiles.open(f"alerts-{alert.env.value}.md", mode="a") as f:
         await f.write(f"|{alert.name:^25}|{alert.message:^25}|\n")
         logger.info(
-            f"Successfully add alert: {alert.name} with message: {alert.message} from environment: {alert.env.value}"
+            f"Successfully add alert: {alert.name} with message: {alert.message} | environment: {alert.env.value}"
         )
     return {"status": "ok"}
 
@@ -47,11 +47,17 @@ async def send_alert(alert_env: Environment):
                     f"Successfully send: {len(alerts)-3} alerts from environment: {alert_env.value} to the reciever server"
                 )
         async with aiofiles.open(f"alerts-{alert_env.value}.md", "w") as file:
-            logger.info(f"Successfully clear alerts for environment: {alert_env.value}")
+            logger.info(f"Successfully clear alerts | environment: {alert_env.value}")
         return {"status": "ok"}
     else:
-        logger.info(f"There are no alerts for {alert_env.value}, skipping...")
+        logger.info(f"There are no alerts | environment {alert_env.value}, skipping...")
         raise HTTPException(
             status_code=200,
             detail=f"There are no alerts for {alert_env.value}, skipping...",
         )
+
+@alert_router.delete("/clear/{alert_env}", summary="Clear alert for specific environment")
+async def clear_alerts(alert_env: Environment):
+  async with aiofiles.open(f"alerts-{alert_env.value}.md", mode="w") as f:
+    logger.info(f"Successfully clear alerts | environment: {alert_env.value}")
+    return {"status": "ok"}

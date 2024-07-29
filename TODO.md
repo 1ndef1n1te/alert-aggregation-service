@@ -1,4 +1,2 @@
 - readme
-- refactor logging && exceptions
 - add mattermost && slack compatibility info to readme
-- add clear alerts endpoint
