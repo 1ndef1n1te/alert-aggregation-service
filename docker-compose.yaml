@@ -13,3 +13,4 @@ services:
       - ENVIRONMENTS=env1 env2
     volumes:
       - ./data:/data
+    restart: always
