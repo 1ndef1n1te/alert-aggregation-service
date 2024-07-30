@@ -1,0 +1,12 @@
+{{- if .Values.serviceConfig }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.serviceName }}
+data:
+  {{- range $k, $v := .Values.serviceConfig }}
+  {{- if $v }}
+  {{ $k }}: {{ $v | quote }}
+  {{- end }}
+  {{- end }}
+{{- end }}

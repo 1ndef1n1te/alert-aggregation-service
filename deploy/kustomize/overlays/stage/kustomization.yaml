@@ -1,0 +1,45 @@
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+commonLabels:
+  app: alerts-aggregation-tool
+  app.kubernetes.io/name: alerts-aggregation-tool
+  app.kubernetes.io/instance: alerts-aggregation-tool
+
+resources:
+  - ../../base/
+
+patches:
+  - target:
+      name: service-name
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: alerts-aggregation-tool
+  - target:
+      kind: Ingress
+      name: service-name
+    patch: |-
+      - op: replace
+        path: /spec/rules/0/host
+        value: alerts-aggregation-tool.{{domain}}
+  - target:
+      kind: Deployment
+      name: service-name
+    patch: |-
+      - op: replace 
+        path: /spec/template/spec/containers/0/name
+        value: alerts-aggregation-tool
+  - target:
+      kind: Deployment
+      name: service-name
+    patch: |-
+      - op: replace 
+        path: /spec/template/spec/imagePullSecrets/0/name
+        value: "{{container_registry_secret}}"
+
+images:
+  - name: "REDACTED/REDACTED"
+    newName: "{registry_url}/{repo_url}"
+    newTag: "{image_tag}"

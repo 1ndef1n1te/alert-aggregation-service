@@ -43,6 +43,21 @@ curl -X 'DELETE' 'http://0.0.0.0:8000/api/v1/alert/clear/{environment}' -H 'acce
 3) Run docker-compose.yaml: `docker-compose up -d`
 4) Your alerts will be mapping into `./data` directory
 
+### Deploy to Kubernetes
+
+Deploy using helm
+
+1) Change `values.yaml`
+2) Template your manifests for checking with command `helm template {path-to-chart}`
+3) Use command `helm install {release-name} .` to deploy 
+
+Deploy using kustomize
+
+1) Change `kustomization.yaml`, located in `./overlays/stage`
+2) Template your manifests for checking with command `kubectl kustomize {path-to-kustomize}`
+3) Use command `kubectl apply -k {path-to-kustomize}` to deploy 
+
+
 ### Logs
 
 For viewing logs use `docker logs {container-id}` command

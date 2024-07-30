@@ -1,2 +1,0 @@
-- readme
-- add mattermost && slack compatibility info to readme

@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: service-name
+spec:
+  selector:
+    matchLabels:
+      app: service-name
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: service-name
+        app.kubernetes.io/version: REDACTED
+        app.kubernetes.io/name: service-name
+    spec:
+      containers:
+        - name: service-name
+          image: "REDACTED/REDACTED:REDACTED"
+          envFrom:
+            - configMapRef:
+                name: service-name
+      imagePullSecrets:
+        - name: "REDACTED"

@@ -1,0 +1,15 @@
+image:
+  pullSecrets:
+    - REDACTED
+  registry: REDACTED
+  name: REDACTED
+  tag: REDACTED
+
+replicas: 1
+serviceName: alerts-aggregation-tool
+host: alerts-aggregation-tool.domain
+namespace: REDACTED
+containerPort: 8000
+serviceConfig:
+  MATTERMOST_WEBHOOK_URL: "https://mattermost.REDACRED"
+  ENVIRONMENTS: "one two free"
