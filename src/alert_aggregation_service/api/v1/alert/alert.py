@@ -64,8 +64,8 @@ async def list_alerts(alert_env: Environment):
         ) as file:
             alerts = await file.readlines()
             for alert in alerts:
-                alert = alert.replace(" ", "").strip("|").strip("\n").split("|")
-                alert = Alert(name=alert[0], message=alert[1], env=alert_env.value)
+                alert = alert.strip("|").strip("\n").split("|")
+                alert = Alert(name=alert[0].strip(), message=alert[1].strip(), env=alert_env.value)
                 alerts_list.append(alert)
         return alerts_list
     except FileNotFoundError:
